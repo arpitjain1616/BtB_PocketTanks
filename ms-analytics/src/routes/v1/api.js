@@ -22,15 +22,9 @@ let apiRoutes = (router) => {
     router.get('/twitter/sentiment', api.twitter.sentiment);
     router.get('/twitter/fetchPosts', api.twitter.fetchPostsFromTwitter);
     router.get('/twitter/profilestats', api.twitter.profileStats);
-
-
     router.get('/tweets/:username', api.auth.fetchComment);
-<<<<<<< HEAD
-=======
     router.get('/profile/:username', api.twitter.twitterProfile);
-
->>>>>>> ed1ab5775676cdc11b742e60871b7bc3bf80453a
-
+    
     return router;
 }
 export default apiRoutes;
