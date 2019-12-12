@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, ViewChild, Optional } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import Swal from 'sweetalert2';
+import { UserService } from 'app/shared/Services/user/user.service';
 
 export class ImageFile {
   Name: string;
@@ -15,21 +16,22 @@ export class ImageFile {
   styleUrls: ['./newpost.component.css']
 })
 export class NewpostComponent implements OnInit {
-  @ViewChild("file",{static:true}) file;
+  @ViewChild("file", { static: true }) file;
   private files: Array<File> = new Array();
   private fileImageError: boolean = false;
   private fileImageName: string[] = [];
   private fileImageBase64: any[] = [];
-  listImageFile:ImageFile[]=[];
+  listImageFile: ImageFile[] = [];
 
   twitterSelected = true;
   instaSelected = false;
   facebookSelected = false;
   imageUploaded = false;
-  
+
   newPostFormGroup: FormGroup;
   constructor(
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+    private _userService: UserService
   ) { }
 
   addFiles() {
@@ -41,6 +43,7 @@ export class NewpostComponent implements OnInit {
   }
 
   async onDroppedFilesChange(files: Array<File>) {
+    debugger;
     if (this.files.length + Object.keys(files).length > 1) {
 
       Swal.fire({
@@ -61,7 +64,7 @@ export class NewpostComponent implements OnInit {
       if (!isNaN(parseInt(key, 10))) {
         const ext = files[key].name
           .split(".")
-          [files[key].name.split(".").length - 1].toLocaleLowerCase();
+        [files[key].name.split(".").length - 1].toLocaleLowerCase();
 
         if (
           allowedExtensions.lastIndexOf(ext) !== -1 &&
@@ -70,27 +73,19 @@ export class NewpostComponent implements OnInit {
           this.fileImageError = false;
           //To do : need to check for duplicate images
           this.files.push(files[key]);
-          this.fileImageBase64.push({name: files[key].name,Base64: await this.getBase64(files[key])});
+          this.fileImageBase64.push({ name: files[key].name, Base64: await this.getBase64(files[key]) });
+          this.imageUploaded = true;
         } else {
-          
+
           return;
         }
       }
     }
   }
-  
-  prepareImageFile() {
-    this.fileImageBase64.forEach(element=>{
-      let imageFile = new ImageFile();
-      imageFile.Name = element.name;
-      imageFile.Base64 = element.Base64;
-      this.listImageFile.push(imageFile);
-    });
-    
-    return this.listImageFile;
-  }
 
   remove(filename) {
+    this.imageUploaded = false;
+    this.fileImageBase64 = [];
     this.files.splice(this.files.findIndex(a => a.name == filename), 1);
   }
 
@@ -114,81 +109,54 @@ export class NewpostComponent implements OnInit {
         ]
       ],
       scheduleIt: [
-        "",
-        [
-          <any>Validators.required
-        ]
+        ""
       ],
-      dateTime: [
-        "",
-        [
-          <any>Validators.required
-        ]
-      ]
+      dateTime: new FormControl({ value: "", disabled: true }, <any>Validators.required),
+    });
+
+    this.newPostFormGroup.get('scheduleIt').valueChanges.subscribe(value => {
+      if (value)
+        this.newPostFormGroup.get('dateTime').enable();
+      else
+        this.newPostFormGroup.get('dateTime').disable();
     });
   }
 
-  submitForm(){
+  submitForm() {
+
     this.markFormGroupTouched(this.newPostFormGroup)
 
-    if(this.newPostFormGroup.valid){
+    if (this.newPostFormGroup.valid) {
+      //     {
+      //       "text": "sample tweet some time after",
+      //      "mediaPath":"C:/Users/kalpriksh.bist/Pictures/dev/Socialize.png",
+      //      "time": "Tue Dec 10 2019 17:48:36 GMT+0530 (India Standard Time)",
+      //      "isScheduled": true,
+      //      "containsMedia": true
+      //  }
       let newPost = {
         text: this.newPostFormGroup.get('text').value,
-        scheduleIt: this.newPostFormGroup.get('scheduleIt').value,
-        // dateTime: this.newPostFormGroup.get('dateTime').value
+        isScheduled: this.newPostFormGroup.get('scheduleIt').value,
+        time: this.newPostFormGroup.get('dateTime').value,
+        mediaPath: (this.fileImageBase64.length > 0 ? this.fileImageBase64[0].Base64 : ''),
+        containsMedia: (this.fileImageBase64.length > 0 ? true : false)
       }
+
+      this._userService.newPost(newPost).subscribe(response => {
+        console.log(response);
+      });
     }
   }
 
-  //#region drag N drop
-  // afuConfig = {
-  //   uploadAPI: {
-  //     url:"http://localhost:3000/upload"
-  //   }
-  // };
-
-  // afuConfig = {
-  //   multiple: false,
-  //   formatsAllowed: ".jpg,.png",
-  //   maxSize: "10",
-  //   uploadAPI:  {
-  //     url:"undefined",
-  //   //   headers: {
-  //   //  "Content-Type" : "text/plain;charset=UTF-8",
-  //   //  "Authorization" : `Bearer`
-  //   //   }
-  //   },
-  //   theme: "dragNDrop",
-  //   hideProgressBar: false,
-  //   hideResetBtn: true,
-  //   hideSelectBtn: false,
-  //   replaceTexts: {
-  //     selectFileBtn: 'Select Files',
-  //     resetBtn: 'Reset',
-  //     uploadBtn: 'Upload',
-  //     dragNDropBox: 'Drag N Drop',
-  //     attachPinBtn: 'Attach Files...',
-  //     afterUploadMsg_success: 'Successfully Uploaded !',
-  //     afterUploadMsg_error: 'Upload Failed !'
-  //   }
-  // };
-  // DocUpload(e){
-  //   console.log(e);
-  // }
-  //#endregion
-  
-
-
-  markFormGroupTouched(FormGroup: FormGroup){
+  markFormGroupTouched(FormGroup: FormGroup) {
     (<any>Object).values(FormGroup.controls).forEach(control => {
-      try{
+      try {
         control.markAsTouched();
-        if(control.controls){
+        if (control.controls) {
           this.markFormGroupTouched(control);
         }
       }
-      catch(e){ }
+      catch (e) { }
     });
   }
-
 }

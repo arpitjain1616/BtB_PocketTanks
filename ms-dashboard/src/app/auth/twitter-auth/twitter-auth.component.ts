@@ -18,7 +18,7 @@ export class TwitterAuthComponent implements OnInit {
     // router call to navigate
     this._activatedRoute.queryParams.forEach((urlParams) => {
 
-      var twitterAccountRequest = {
+      const twitterAccountRequest = {
         "oauth_token": urlParams.oauth_token,
         "oauth_verifier": urlParams.oauth_verifier
       }

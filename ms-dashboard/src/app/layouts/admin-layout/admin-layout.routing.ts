@@ -22,7 +22,7 @@ export const AdminLayoutRoutes: Routes = [
         canActivate: [AuthGuardService]
     },
     {
-        path: 'new',
+        path: 'new-post',
         component: NewpostComponent
     }
 ];

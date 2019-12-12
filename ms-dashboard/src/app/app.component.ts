@@ -9,11 +9,5 @@ import { Component } from '@angular/core';
 
 export class AppComponent{
 
-  add(a, b) {
-    var c = a + b;
-    return c;
-
-  }
-
 }
 

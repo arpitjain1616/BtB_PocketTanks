@@ -50,4 +50,13 @@ export class UserService {
       emailVerificationRequest
     );
   }
+
+  newPost(newPostRequest) :any
+  {
+    return this.repositoryService.create(
+      "/twitter/tweet",
+      newPostRequest
+    );
+  }
+
 }
