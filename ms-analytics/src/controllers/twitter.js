@@ -13,14 +13,16 @@ class Twitter extends AppController {
     constructor() {
         super();
     }
-
+    //This API returns KPIS
+    /*
+     * 
+     * @param {Object} user The request object
+    */
     async kpis(req, res) {
         try {
             const post = new Post();
-
             // Extracting userId from request body
             const userId = req.user._id;
-
             // Fetching KPI's from db
             const responseData = {
                 postsCount: await post.getCount({
@@ -46,7 +48,7 @@ class Twitter extends AppController {
                             $sum: "$favoriteCount"
                         }
                     }
-                }]))[0]['sumFavoriteCount'],
+                }])),
                 retweetCount: (await post.getAggregate([{
                     $match: {
                         userId: mongoose.Types.ObjectId(userId)
@@ -58,8 +60,22 @@ class Twitter extends AppController {
                             $sum: "$retweetCount"
                         }
                     }
-                }]))[0]['sumRetweetCount']
+                }]))
             };
+
+            // checks to extract value from object
+
+            if (responseData['favoriteCount'].length) {
+                responseData['favoriteCount'] = responseData['favoriteCount'][0]['sumFavoriteCount'];
+            } else {
+                responseData['favoriteCount'] = 0;
+            }
+
+            if (responseData['retweetCount'].length) {
+                responseData['retweetCount'] = responseData['retweetCount'][0]['sumRetweetCount'];
+            } else {
+                responseData['retweetCount'] = 0;
+            }
 
             super.success(req, res, {
                 statusCode: 200,
@@ -67,7 +83,6 @@ class Twitter extends AppController {
                 data: responseData
             });
         } catch (error) {
-            console.log(error.message);
             super.failure(req, res, {
                 statusCode: 400,
                 message: error.message
@@ -105,7 +120,6 @@ class Twitter extends AppController {
     }
 
     async sentiment(req, res) {
-
         const _createCriteriaTimeSeries = (sentiment, userId) => {
             return [{
                 $match: {
@@ -182,7 +196,6 @@ class Twitter extends AppController {
                 }
             });
         } catch (error) {
-            console.log(error.message)
             super.failure(req, res, {
                 statusCode: 400,
                 message: error.message
@@ -204,7 +217,6 @@ class Twitter extends AppController {
                 data: {}
             });
         } catch (error) {
-            console.log(error.message)
             super.failure(req, res, {
                 statusCode: 400,
                 message: error.message
@@ -249,7 +261,6 @@ class Twitter extends AppController {
                 });
             }
         } catch (error) {
-            console.log(error.message)
             super.failure(req, res, {
                 statusCode: 400,
                 message: error.message
@@ -298,64 +309,81 @@ class Twitter extends AppController {
                 data: data
             });
         } catch (error) {
-            console.log(error.message)
             super.failure(req, res, {
                 statusCode: 400,
                 message: error.message
             });
         }
     }
+
     async postTweet(req, res){
         try{
-            const user = new User()
-            let data = await user.get({
-                _id: req.user._id
-            });
-            
-            if (data.length == 0) {
-                throw new Error("No email exists");
-            } else {
-                const tw = new TwitterWrapper(data[0]['twitter']['oAuthToken'], data[0]['twitter']['oAuthTokenSecret'])
-                console.log(data);
-                let postedTweet = await tw.postTweet(req.body);
-                super.success(req, res, {
-                    statusCode: 200,
-                    message: "Process Started",
-                    data: postedTweet
-                });
-            }
-        } catch (error){
-            console.log(error.message);
-            super.failure(req,res, {
-                statusCode: 400,
-                message: error.message
-                })
-        }
-    }
-    async postMediaTweet(req, res){
-        try{
-            const user = new User()
+            const user = new User();
             let data = await user.get({
                 _id: req.user._id
             });
             if (data.length == 0) {
                 throw new Error("No email exists");
             } else {
-                const tw = new TwitterWrapper(data[0]['twitter']['oAuthToken'], data[0]['twitter']['oAuthTokenSecret'])
-                let postedTweet = await tw.postMediaTweet(req.body.status,req.body.media);
-                super.success(req, res, {
-                    statusCode: 200,
-                    message: "Process Started",
-                    data: postedTweet
-                });
+                if(!req.body.isScheduled){
+
+                    if(req.body.containsMedia){
+                        const tw = new TwitterWrapper(data[0]['twitter']['oAuthToken'], data[0]['twitter']['oAuthTokenSecret'])
+                        let postedTweet = await tw.postMediaTweet(req.body.text,req.body.media);
+                        super.success(req, res, {
+                            statusCode: 200,
+                            message: "Process Started",
+                            data: postedTweet
+                        });
+                    } else {
+                        const tw = new TwitterWrapper(data[0]['twitter']['oAuthToken'], data[0]['twitter']['oAuthTokenSecret'])
+                        console.log(data);
+                        let postedTweet = await tw.postTweet(req.body.text);
+                        super.success(req, res, {
+                            statusCode: 200,
+                            message: "Process Started",
+                            data: postedTweet
+                        });
+                    }
+                } else {
+
+                    const scheduledTweet = new ScheduledPost()
+
+                    let request = {};
+                    request['userId'] = req.user._id
+                    request['text'] = req.body['text']
+                    request['mediaPath'] = req.body['mediaPath']
+                    request['time'] = new Date(req.body['time']).getTime()
+                    request['isScheduled'] = req.body['isScheduled']
+                    request['containsMedia'] = req.body['containsMedia']
+
+                    
+                    let result = await scheduledTweet.insert(request)
+                    
+                    if(result){
+                        super.success(req, res, {
+                            statusCode: 200,
+                            message: "tweet scheduled",
+                            data: result
+                        });
+                    } else {
+                        super.failure(req,res, {
+                            statusCode: 400,
+                            message: error.message
+                        })
+                    }
+
+                }                
             }
-        } catch (error){
+
+        } catch {
             super.failure(req,res, {
                 statusCode: 400,
                 message: error.message
             })
         }
     }
+
     async scheduleTweet(req, res){
         try{
             const scheduledTweet = new ScheduledPost()
@@ -477,7 +505,6 @@ async wordcloud(req, res) {
                 throw new Error("User doesn't exists");
             }
         } catch (error) {
-            console.log(error.message)
             super.failure(req, res, {
                 statusCode: 400,
                 message: error.message
