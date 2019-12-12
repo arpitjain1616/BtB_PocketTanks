@@ -137,7 +137,6 @@ export class NewpostComponent implements OnInit {
         scheduleIt: this.newPostFormGroup.get('scheduleIt').value,
         // dateTime: this.newPostFormGroup.get('dateTime').value
       }
-      console.log(newPost);
     }
   }
 

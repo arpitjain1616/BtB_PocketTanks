@@ -87,7 +87,7 @@ export class LoginComponent implements OnInit {
               localStorage.setItem("userid", response.data.userId);
               localStorage.setItem("authToken", response.data.token);
               localStorage.setItem("email", this.loginFormGroup.get('username').value);
-              this.router.navigateByUrl('/dashboard/twitter');
+              this.router.navigateByUrl('/dashboard/twitter?twitter=true');
             } else {
               Swal.fire({
                 title: 'Oops!',

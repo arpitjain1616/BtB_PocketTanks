@@ -45,7 +45,6 @@ export class UserService {
     );
   }
   verifyEmail(emailVerificationRequest): any {
-    debugger;
     return this.repositoryService.create(
       "emailverification",
       emailVerificationRequest

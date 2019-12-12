@@ -93,7 +93,7 @@ export class NavbarComponent implements OnInit{
   collapse(){
     this.isCollapsed = !this.isCollapsed;
     const navbar = document.getElementsByTagName('nav')[0];
-    console.log(navbar);
+
     if (!this.isCollapsed) {
       navbar.classList.remove('navbar-transparent');
       navbar.classList.add('bg-white');
@@ -115,8 +115,6 @@ export class NavbarComponent implements OnInit{
 
   logoutUser()
   {
-    console.log(localStorage);
-    debugger;
     if(localStorage != undefined)
     {
       localStorage.removeItem('userid');
@@ -134,7 +132,6 @@ export class NavbarComponent implements OnInit{
     });
     dialogRef.afterClosed().subscribe(result => {
       result = JSON.stringify(result)
-      console.log("data: "+ result)
     });
   }
 

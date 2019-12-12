@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
 import Chart from 'chart.js';
 
 @Component({
@@ -6,7 +6,7 @@ import Chart from 'chart.js';
   templateUrl: './histogram.component.html',
   styleUrls: ['./histogram.component.css']
 })
-export class HistogramComponent implements OnInit {
+export class HistogramComponent implements OnInit, OnChanges {
 
   @Input() histogramResponseData;
   public canvas: any;
@@ -52,7 +52,7 @@ export class HistogramComponent implements OnInit {
     
 
     if (!changes["histogramResponseData"].firstChange) {
-      console.log(changes);
+
       if (this.histogramResponseData.success)
         this.data = this.histogramResponseData["data"];
       else

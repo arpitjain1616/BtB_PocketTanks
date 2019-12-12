@@ -3,6 +3,8 @@ import Chart from 'chart.js';
 import { MatDialog } from '@angular/material';
 import { SocialAccountLoginComponent } from '../social-account-login/social-account-login.component';
 import { UserService } from 'app/shared/Services/user/user.service';
+import Swal from 'sweetalert2';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'dashboard-cmp',
@@ -67,7 +69,8 @@ export class DashboardComponent implements OnInit {
     }
   ]
 
-  constructor(public _dialog: MatDialog, private _userService: UserService) {
+  constructor(public _dialog: MatDialog, private _userService: UserService,
+    private _activatedRoute: ActivatedRoute, private router: Router) {
   }
 
   getKPIData() {
@@ -93,7 +96,11 @@ export class DashboardComponent implements OnInit {
       }
     },
       error => {
-        console.log(error);
+        Swal.fire({
+          title:'Oops!',
+          text:error.message,
+          icon:'error'
+        })
       });
   }
 
@@ -155,7 +162,11 @@ export class DashboardComponent implements OnInit {
       }
     },
       error => {
-        console.log(error);
+        Swal.fire({
+          title:'Oops!',
+          text:error.message,
+          icon:'error'
+        })
       });
   }
 
@@ -175,22 +186,22 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
 
-    this.getKPIData();
-    this.getLineChartData();
-    this.getHistogramData();
-
-    //Check if twitter logged in
-    var twitterAuthDate = new Date(localStorage.getItem('twitterAuth').toString());
-    var todaysDate = new Date();
-
-    // To calculate the no. of days between two dates 
-    var Difference_In_Days = (todaysDate.getTime() - twitterAuthDate.getTime()) / (1000 * 3600 * 24);
-
-    if (Difference_In_Days >= 1)
-      this._dialog
+    this._activatedRoute.queryParams.forEach((queryParams) => {
+      if(queryParams["twitter"])
+      {
+        const dialog = this._dialog
         .open(SocialAccountLoginComponent, {
           width: "400px",
           maxHeight: "400px"
-        });
+        }).afterClosed().subscribe(response=>{
+          this.router.navigateByUrl('/dashboard/twitter');
+        });       
+      }
+    });
+    
+
+    this.getKPIData();
+    this.getLineChartData();
+    this.getHistogramData();   
   }
 }

@@ -24,7 +24,14 @@ export class EmailVerificationComponent implements OnInit {
       this._userservice.verifyEmail(emailVerificationRequest).subscribe(
         response => {
           if (response.success) {
-            window.close();
+            Swal.fire({
+              title:'Success',
+              text: response.message,
+              icon:'success'
+            }).then(value => {
+              window.close();  
+            })
+            
           } else {
             Swal.fire({
               title: 'Oops!',

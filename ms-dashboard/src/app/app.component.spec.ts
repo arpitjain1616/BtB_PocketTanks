@@ -1,7 +1,7 @@
 import { TestBed, async } from '@angular/core/testing';
 
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './user/register-login/login.component';
 
 import {Component, DebugElement} from "@angular/core";
 import {ComponentFixture} from '@angular/core/testing';
@@ -78,7 +78,6 @@ describe(' Login Component', ()=>{
  it('email id is blank', async(() => {
     const fixture = TestBed.createComponent(AppComponent);
     const email= fixture.debugElement.componentInstance;
-    console.log(email)
   }));
   
     

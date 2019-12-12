@@ -47,8 +47,6 @@ export class ProfileDialogComponent {
   }
 
   onNoClick(): void {
-    console.log(this.data);
-    
     this.dialogRef.close()
   }
 
