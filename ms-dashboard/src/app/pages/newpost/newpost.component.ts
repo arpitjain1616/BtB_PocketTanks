@@ -43,7 +43,7 @@ export class NewpostComponent implements OnInit {
   }
 
   async onDroppedFilesChange(files: Array<File>) {
-    debugger;
+
     if (this.files.length + Object.keys(files).length > 1) {
 
       Swal.fire({
@@ -127,13 +127,6 @@ export class NewpostComponent implements OnInit {
     this.markFormGroupTouched(this.newPostFormGroup)
 
     if (this.newPostFormGroup.valid) {
-      //     {
-      //       "text": "sample tweet some time after",
-      //      "mediaPath":"C:/Users/kalpriksh.bist/Pictures/dev/Socialize.png",
-      //      "time": "Tue Dec 10 2019 17:48:36 GMT+0530 (India Standard Time)",
-      //      "isScheduled": true,
-      //      "containsMedia": true
-      //  }
       let newPost = {
         text: this.newPostFormGroup.get('text').value,
         isScheduled: this.newPostFormGroup.get('scheduleIt').value,
@@ -143,9 +136,31 @@ export class NewpostComponent implements OnInit {
       }
 
       this._userService.newPost(newPost).subscribe(response => {
-        console.log(response);
+        if (response.success) {
+          Swal.fire({
+            title: 'Success',
+            text: 'Your tweet has been scheduled',
+            icon: 'success'
+          });
+
+          this.clearForm();
+        }
+      },
+      error=>{
+        Swal.fire({
+          title:'Oops',
+          text:'There might be some problem. Please try again later',
+          icon:'error'
+        });
       });
     }
+  }
+
+  clearForm() {
+    this.newPostFormGroup.reset();
+    this.imageUploaded = false;
+    this.fileImageBase64 = [];
+    this.files = [];
   }
 
   markFormGroupTouched(FormGroup: FormGroup) {

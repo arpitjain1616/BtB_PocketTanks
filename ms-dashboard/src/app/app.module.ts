@@ -15,7 +15,7 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { FixedPluginComponent } from './shared/Components/fixedplugin/fixedplugin.component';
 import { LoginComponent } from './user/register-login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatDialogModule, MatDatepickerModule, MatNativeDateModule, MatSelectModule, MatTabsModule } from '@angular/material';
+import { MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatDialogModule, MatDatepickerModule, MatNativeDateModule, MatSelectModule, MatTabsModule,MatProgressSpinnerModule } from '@angular/material';
 import { TwitterAuthComponent } from './auth/twitter-auth/twitter-auth.component';
 import { HttpClientModule } from '@angular/common/http';
 import { EmailVerificationComponent } from './auth/email-verification/email-verification.component';
@@ -56,7 +56,8 @@ import { ProfileDialogComponent } from './user/profile-dialog/profile-dialog.com
     MatTabsModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatProgressSpinnerModule
   ],
   providers: [],
   bootstrap: [AppComponent],
