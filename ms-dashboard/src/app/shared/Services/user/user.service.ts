@@ -31,21 +31,47 @@ export class UserService {
       `twitter/profilestats`
     );
   }
+
+  getWordCloudData(): any {
+    return this.repositoryService.getData(
+      `twitter/wordcloud`
+    );
+  }
   
+  getRecentTweets(): any {
+    return this.repositoryService.getData(
+      `twitter/posts`
+    );
+  }
+  
+  getProfileData(): any {
+    return this.repositoryService.getData(
+      `twitter/profile`
+    );
+  }
+
+  getScheduledTweets(): any {
+    return this.repositoryService.getData(
+      `twitter/scheduledtweets`
+    );
+  }
+
   createUser(createUserRequest): any {
-    return this.repositoryService.create(
+    return this.repositoryService.post(
       "registration",
       createUserRequest
     );
   }
+  
   loginUser(loginUserRequest): any {
-    return this.repositoryService.create(
+    return this.repositoryService.post(
       "login",
       loginUserRequest
     );
   }
+
   verifyEmail(emailVerificationRequest): any {
-    return this.repositoryService.create(
+    return this.repositoryService.post(
       "emailverification",
       emailVerificationRequest
     );
@@ -53,10 +79,9 @@ export class UserService {
 
   newPost(newPostRequest) :any
   {
-    return this.repositoryService.create(
+    return this.repositoryService.post(
       "/twitter/tweet",
       newPostRequest
     );
   }
-
 }

@@ -13,7 +13,8 @@ export const ROUTES: RouteInfo[] = [
     //  Do we need separate components for 3 medias or just one?
     { path: '/dashboard/twitter',     title: 'Twitter',         icon:'fa fa-twitter',       class: '' },
     { path: '/dashboard/facebook',     title: 'Facebook',         icon:'fa fa-facebook',       class: '' },
-    { path: '/dashboard/instagram',     title: 'Instagram',         icon:'fa fa-instagram',       class: '' }
+    { path: '/dashboard/instagram',     title: 'Instagram',         icon:'fa fa-instagram',       class: '' },
+    
 ];
 
 @Component({

@@ -1,16 +1,19 @@
 <div class="container text-center">
-  <div class="row">
-    <div class="col-md-6">
-      <h2 class="text-center my-4">New Post!!</h2>
+  <div class="row text-center">
+    <div class="col-md-6" style="border-right: 1px solid Lightgray;">
+      <h4 *ngIf="!editPost" class="text-center my-4">New Post</h4>
+      <h4 *ngIf="editPost" class="text-center my-4">Edit Post</h4>
       <div class="icons my-5">
-        <i class="fa fa-twitter-square media" [class.media-selected]="twitterSelected"
-          (click)="twitterSelected=!twitterSelected">
+        <i class="fa fa-twitter-square media" 
+          [class.media-selected]="twitterSelected" 
+          (click)="twitterSelected=!twitterSelected; openSnackBar('Select atleast one platform.', 'Buy Premium!')">
         </i>
-        <i class="fa fa-facebook-square media" [class.media-selected]="facebookSelected"
-          (click)="facebookSelected=!facebookSelected">
+        <i class="fa fa-facebook-square media" 
+          (click)="openSnackBar('Not available in Pro Version', 'Buy Premium!')">
         </i>
-        <i class="fa fa-instagram media" [class.media-selected]="instaSelected" (click)="instaSelected=!instaSelected">
-        </i>
+        <i class="fa fa-instagram media" 
+          (click)="openSnackBar('Not available in Pro Version', 'Buy Premium!')">
+      </i>
       </div>
       <form [formGroup]="newPostFormGroup" (ngSubmit)="submitForm()">
         <div class="form-group">
@@ -28,7 +31,7 @@
           </mat-form-field>
         </div>
 
-        <div class="example-container d-flex flex-column" [ngClass]="files.length>5?'overflowFiles':''">
+        <div class="example-container d-flex flex-column mx-5" [ngClass]="files.length>5?'overflowFiles':''">
           <table>
             <tr *ngFor="let item of files">
               <td>
@@ -48,8 +51,8 @@
             Please select an image
           </span>
         </mat-error>
-        <div class="example-container d-flex flex-column" ng-mouseenter="options=true" ng-mouseleave="options=false"
-          appDragAndDrop (filesChangeEmiter)="onDroppedFilesChange($event)" style="background-color: #eeeeee;">
+        <div class="example-container d-flex flex-column mx-5 dashed-border" ng-mouseenter="options=true" ng-mouseleave="options=false"
+          appDragAndDrop (filesChangeEmiter)="onDroppedFilesChange($event)">
           <input type="file" #file (click)="file.value = null" style="display: none" (change)="onFilesAdded()"
             multiple />
           <span class="floatingUpload align-self-center my-auto" (click)="addFiles()"><i
@@ -60,7 +63,7 @@
           </div>
         </div>
 
-        <div class="schedule">
+        <div class="schedule mt-3">
           <div class="form-group">
             <mat-slide-toggle color="primary" formControlName="scheduleIt">
               Schedule It!
@@ -88,8 +91,9 @@
         </button>
       </form>
     </div>
+    
     <div class="col-md-6">
-      <h2 class="text-center my-4">Preview</h2>
+      <h4 class="text-center my-4">Preview</h4>
       <mat-card class="twitter-card mx-auto my-5">
         <mat-card-header>
           <div mat-card-avatar class="example-header-image">

@@ -1,7 +1,9 @@
-import { Component, OnInit, Inject, ViewChild, Optional } from "@angular/core";
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import Swal from 'sweetalert2';
 import { UserService } from 'app/shared/Services/user/user.service';
+import { Component, OnInit, Inject, ViewChild, Optional, Input } from "@angular/core";
+import Swal from 'sweetalert2';
+import { ActivatedRoute } from '@angular/router';
+import { MatSnackBar } from '@angular/material';
 
 export class ImageFile {
   Name: string;
@@ -13,27 +15,32 @@ export class ImageFile {
 @Component({
   selector: 'app-newpost',
   templateUrl: './newpost.component.html',
-  styleUrls: ['./newpost.component.css']
+  styleUrls: ['./newpost.component.scss']
 })
 export class NewpostComponent implements OnInit {
   @ViewChild("file", { static: true }) file;
+
   private files: Array<File> = new Array();
   private fileImageError: boolean = false;
   private fileImageName: string[] = [];
   private fileImageBase64: any[] = [];
   listImageFile: ImageFile[] = [];
 
-  twitterSelected = true;
-  instaSelected = false;
-  facebookSelected = false;
-  imageUploaded = false;
+  @Input() tweet;
 
+  twitterSelected = true;
+  imageUploaded = false;
+  editPost = false;
   newPostFormGroup: FormGroup;
+
   constructor(
     private _fb: FormBuilder,
-    private _userService: UserService
+    private _userService: UserService,
+    private _activatedRoute: ActivatedRoute,
+    private _snackBar: MatSnackBar
   ) { }
 
+  // #region drag N drop
   addFiles() {
     this.file.nativeElement.click();
   }
@@ -101,6 +108,23 @@ export class NewpostComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    this.tweet = {
+      isScheduled: true,
+      dateTime: '',
+      profile_image: "https://material.angular.io/assets/img/examples/shiba2.jpg",
+      screen_name: "@Shibu_the_dog",
+      username: "Shibu",
+      image: "https://material.angular.io/assets/img/examples/shiba2.jpg",
+      text: "Hiii, guys. All the best.",
+      scheduled_at: "12 DEC 2019"
+    }
+
+
+    // If there's no input
+    // if (this.tweet != "")
+    //   this.editPost = true;
+
     this.newPostFormGroup = this._fb.group({
       text: [
         "",
@@ -135,24 +159,30 @@ export class NewpostComponent implements OnInit {
         containsMedia: (this.fileImageBase64.length > 0 ? true : false)
       }
 
-      this._userService.newPost(newPost).subscribe(response => {
-        if (response.success) {
-          Swal.fire({
-            title: 'Success',
-            text: 'Your tweet has been scheduled',
-            icon: 'success'
-          });
+      if (this.editPost) {
+        // api to edit post
+      }
+      else {
+        // api to create new
+        this._userService.newPost(newPost).subscribe(response => {
+          if (response.success) {
+            Swal.fire({
+              title: 'Success',
+              text: 'Your tweet has been scheduled',
+              icon: 'success'
+            });
 
-          this.clearForm();
-        }
-      },
-      error=>{
-        Swal.fire({
-          title:'Oops',
-          text:'There might be some problem. Please try again later',
-          icon:'error'
-        });
-      });
+            this.clearForm();
+          }
+        },
+          error => {
+            Swal.fire({
+              title: 'Oops',
+              text: 'There might be some problem. Please try again later',
+              icon: 'error'
+            });
+          });
+      }
     }
   }
 
@@ -161,6 +191,12 @@ export class NewpostComponent implements OnInit {
     this.imageUploaded = false;
     this.fileImageBase64 = [];
     this.files = [];
+  }
+
+  openSnackBar(message: string, action: string) {
+    this._snackBar.open(message, action, {
+      duration: 3000,
+    });
   }
 
   markFormGroupTouched(FormGroup: FormGroup) {

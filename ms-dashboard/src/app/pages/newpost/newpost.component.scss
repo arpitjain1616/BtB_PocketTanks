@@ -38,11 +38,8 @@ textarea{
 .dragNdrop{
     width: 80%;
     height: 100px;
-    background-color: rgb(196, 191, 191);
+    
 }
-/* .afu-dragndrop-box{
-    margin: auto !important;
-} */
 
 .schedule{
     display: flex;
@@ -84,6 +81,8 @@ textarea{
 
 i.nc-cloud-upload-94 {
     cursor: pointer;
+    font-size: -webkit-xxx-large;
+    color: darkgray;
   }
   
   i.nc-cloud-upload-94:hover,
@@ -101,3 +100,15 @@ i.nc-cloud-upload-94 {
     overflow-x: auto;
     height:9rem;
   }
+
+  .dashed-border
+  {
+      border: 3px dashed lightgray;
+      background-color: white !important;
+  }
+
+  hr.vertical {
+    height:100%; /* you might need some positioning for this to work, see other questions about 100% height */
+    width:0;
+    border:1px solid black;
+}

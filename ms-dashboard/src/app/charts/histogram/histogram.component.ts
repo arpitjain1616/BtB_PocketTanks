@@ -4,53 +4,29 @@ import Chart from 'chart.js';
 @Component({
   selector: 'histogram',
   templateUrl: './histogram.component.html',
-  styleUrls: ['./histogram.component.css']
+  styleUrls: ['./histogram.component.scss']
 })
 export class HistogramComponent implements OnInit, OnChanges {
 
   @Input() histogramResponseData;
-  public canvas: any;
-  public ctx;
+  canvas: any;
+  ctx;
   myBarChart;
   noGridLines = {}
-  public data;
+  data;
 
   month = [];
   likes = [];
   comments = [];
   retweets = [];
-
-
-
   modifiedData;
-  // modifiedData = {
-  //   labels: ["Jan", "Feb", "Mar", "Apr", "May", "June"],
-  //   datasets: [
-  //       {
-  //           label: "Likes",
-  //           backgroundColor: "#6bd098",
-  //           data: [3,7,4,5,8,15]
-  //       },
-  //       {
-  //           label: "Retweets",
-  //           backgroundColor: "#f17e5d",
-  //           data: [4,3,5,4,3,5]
-  //       },
-  //       {
-  //           label: "Comments",
-  //           backgroundColor: "#fcc468",
-  //           data: [7,2,6,4,3,5]
-  //       }
-  //   ]
-  // };
-
-
 
   constructor() { }
 
-  ngOnChanges(changes: SimpleChanges) {
-    
+  ngOnInit() {
+  }
 
+  ngOnChanges(changes: SimpleChanges) {
     if (!changes["histogramResponseData"].firstChange) {
 
       if (this.histogramResponseData.success)
@@ -58,13 +34,15 @@ export class HistogramComponent implements OnInit, OnChanges {
       else
         return;
 
+      this.data = this.histogramResponseData["data"];
+
       this.data.forEach(element => {
         this.likes.push(element.sumFavoriteCount)
         this.comments.push(element.sumCommentCount)
         this.retweets.push(element.sumRetweetCount)
         this.month.push(element.month)
       });
-      
+
       this.modifiedData = {
         labels: this.month,
         datasets: [
@@ -101,13 +79,9 @@ export class HistogramComponent implements OnInit, OnChanges {
           }
         }]
       }
+
       this.createChart()
     }
-
-  }
-
-  ngOnInit() {
-
   }
 
   createChart() {
@@ -139,7 +113,7 @@ export class HistogramComponent implements OnInit, OnChanges {
       }]
     };
 
-    this.myBarChart.destroy();
+    this.myBarChart!=undefined?this.myBarChart.destroy():'';
     this.createChart()
   }
 
@@ -159,7 +133,7 @@ export class HistogramComponent implements OnInit, OnChanges {
         }
       }]
     }
-    this.myBarChart.destroy();
+    this.myBarChart!=undefined?this.myBarChart.destroy():'';
     this.createChart()
   }
 }
