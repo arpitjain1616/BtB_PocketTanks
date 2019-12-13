@@ -27,6 +27,7 @@ import { CalendarComponent } from 'app/pages/calendar/calendar.component';
 import { CalendarModule, DateAdapter } from 'angular-calendar';
 import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 import { TweetDialogComponent } from 'app/user/tweet-dialog/tweet-dialog.component';
+import { TransformNumberPipe } from "../../shared/pipes/transform-number";
 
 @NgModule({
   imports: [
@@ -69,7 +70,8 @@ import { TweetDialogComponent } from 'app/user/tweet-dialog/tweet-dialog.compone
     HistogramComponent,
     KpiComponent,
     CalendarComponent,
-    TweetDialogComponent
+    TweetDialogComponent,
+    TransformNumberPipe
   ],
   entryComponents: [
     SocialAccountLoginComponent,
